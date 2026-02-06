@@ -36,11 +36,11 @@ export function DonationSection() {
               <div className="flex-shrink-0">
                 <div className="relative">
                   <div className="absolute -inset-3 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl blur-lg" />
-                  <div className="relative bg-white rounded-xl p-4 shadow-lg">
+                  <div className="relative bg-white rounded-xl p-5 shadow-lg">
                     <img 
                       src={donateQR} 
                       alt="QR Code Donate - Trần Thiên Chương" 
-                      className="w-56 h-56 md:w-64 md:h-64 object-contain"
+                      className="w-72 h-72 md:w-80 md:h-80 object-contain"
                     />
                   </div>
                 </div>
