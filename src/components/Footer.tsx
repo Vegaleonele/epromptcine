@@ -19,7 +19,7 @@ export function Footer() {
           </p>
           
           <div className="text-xs text-foreground-subtle">
-            © 2024 CinePrompt. All rights reserved.
+            © 2026 Tạo bởi Trần Thiên Chương
           </div>
         </div>
       </div>
