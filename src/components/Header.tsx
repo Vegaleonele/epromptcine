@@ -1,6 +1,11 @@
 import { Film, Sparkles } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { AuthDialog } from "./auth/AuthDialog";
+import { UserMenu } from "./auth/UserMenu";
 
 export function Header() {
+  const { user, loading } = useAuth();
+
   return (
     <header className="border-b border-border/50 bg-background-secondary/50 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -21,20 +26,26 @@ export function Header() {
           </div>
         </div>
         
-        <nav className="hidden md:flex items-center gap-6">
-          <a 
-            href="#generator" 
-            className="text-sm text-foreground-muted hover:text-primary transition-colors"
-          >
-            Generator
-          </a>
-          <a 
-            href="#styles" 
-            className="text-sm text-foreground-muted hover:text-primary transition-colors"
-          >
-            Styles
-          </a>
-        </nav>
+        <div className="flex items-center gap-4">
+          <nav className="hidden md:flex items-center gap-6">
+            <a 
+              href="#generator" 
+              className="text-sm text-foreground-muted hover:text-primary transition-colors"
+            >
+              Generator
+            </a>
+            <a 
+              href="#styles" 
+              className="text-sm text-foreground-muted hover:text-primary transition-colors"
+            >
+              Styles
+            </a>
+          </nav>
+          
+          {!loading && (
+            user ? <UserMenu /> : <AuthDialog />
+          )}
+        </div>
       </div>
     </header>
   );
