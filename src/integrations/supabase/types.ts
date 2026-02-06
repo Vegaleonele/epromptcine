@@ -14,7 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      saved_prompts: {
+        Row: {
+          analysis: string | null
+          aspect_ratio: string | null
+          brief: string
+          created_at: string
+          custom_style: string | null
+          duration: string | null
+          end_frame: string | null
+          fps: string | null
+          id: string
+          scene_details: Json | null
+          start_frame: string | null
+          style: string
+          user_id: string
+          video_prompt: string | null
+        }
+        Insert: {
+          analysis?: string | null
+          aspect_ratio?: string | null
+          brief: string
+          created_at?: string
+          custom_style?: string | null
+          duration?: string | null
+          end_frame?: string | null
+          fps?: string | null
+          id?: string
+          scene_details?: Json | null
+          start_frame?: string | null
+          style: string
+          user_id: string
+          video_prompt?: string | null
+        }
+        Update: {
+          analysis?: string | null
+          aspect_ratio?: string | null
+          brief?: string
+          created_at?: string
+          custom_style?: string | null
+          duration?: string | null
+          end_frame?: string | null
+          fps?: string | null
+          id?: string
+          scene_details?: Json | null
+          start_frame?: string | null
+          style?: string
+          user_id?: string
+          video_prompt?: string | null
+        }
+        Relationships: []
+      }
+      user_api_keys: {
+        Row: {
+          created_at: string
+          id: string
+          openrouter_api_key: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          openrouter_api_key?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          openrouter_api_key?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

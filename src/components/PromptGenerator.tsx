@@ -14,6 +14,8 @@ import { FileUpload } from "./FileUpload";
 import { PromptHistory } from "./PromptHistory";
 import { generatePrompts } from "@/lib/promptGenerator";
 import { savePrompt, type SavedPrompt } from "@/lib/promptHistory";
+import { savePromptToDatabase, type DatabasePrompt } from "@/lib/promptDatabase";
+import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import type { FilmStyle, SceneDetails, PromptInput, GeneratedPrompts } from "@/types/prompt";
 
@@ -27,6 +29,7 @@ const initialSceneDetails: SceneDetails = {
 };
 
 export function PromptGenerator() {
+  const { user } = useAuth();
   const [brief, setBrief] = useState("");
   const [style, setStyle] = useState<FilmStyle>("realistic");
   const [customStyle, setCustomStyle] = useState("");
@@ -39,6 +42,36 @@ export function PromptGenerator() {
   const [instructionContent, setInstructionContent] = useState("");
   const [useAI, setUseAI] = useState(true);
   const [historyRefresh, setHistoryRefresh] = useState(0);
+
+  const saveToStorage = useCallback(async (prompts: GeneratedPrompts) => {
+    const promptData = {
+      brief,
+      style,
+      customStyle: style === "other" ? customStyle : undefined,
+      analysis: prompts.analysis,
+      startFrame: prompts.startFrame,
+      endFrame: prompts.endFrame,
+      videoPrompt: prompts.videoPrompt,
+      sceneDetails,
+      aspectRatio,
+      duration,
+      fps
+    };
+
+    if (user) {
+      // Save to database
+      const { error } = await savePromptToDatabase(promptData);
+      if (error) {
+        console.error("Failed to save to database:", error);
+        // Fallback to local storage
+        savePrompt(promptData);
+      }
+    } else {
+      // Save to local storage
+      savePrompt(promptData);
+    }
+    setHistoryRefresh(prev => prev + 1);
+  }, [user, brief, style, customStyle, sceneDetails, aspectRatio, duration, fps]);
 
   const handleGenerateWithAI = useCallback(async () => {
     if (!brief.trim()) return;
@@ -88,16 +121,8 @@ export function PromptGenerator() {
 
       setGeneratedPrompts(prompts);
       
-      // Save to history
-      savePrompt({
-        brief,
-        style,
-        analysis: prompts.analysis,
-        startFrame: prompts.startFrame,
-        endFrame: prompts.endFrame,
-        videoPrompt: prompts.videoPrompt
-      });
-      setHistoryRefresh(prev => prev + 1);
+      // Save to storage (database or local)
+      await saveToStorage(prompts);
       
       toast.success("Đã tạo prompt với AI thành công!");
     } catch (err) {
@@ -107,42 +132,32 @@ export function PromptGenerator() {
     } finally {
       setIsGenerating(false);
     }
-  }, [brief, style, customStyle, sceneDetails, aspectRatio, duration, fps, instructionContent]);
+  }, [brief, style, customStyle, sceneDetails, aspectRatio, duration, fps, instructionContent, saveToStorage]);
 
-  const handleGenerateLocal = useCallback(() => {
+  const handleGenerateLocal = useCallback(async () => {
     if (!brief.trim()) return;
     
     setIsGenerating(true);
     
-    setTimeout(() => {
-      const input: PromptInput = {
-        brief,
-        style,
-        customStyle: style === "other" ? customStyle : undefined,
-        sceneDetails,
-        aspectRatio,
-        duration,
-        fps
-      };
-      
-      const prompts = generatePrompts(input);
-      setGeneratedPrompts(prompts);
-      
-      // Save to history
-      savePrompt({
-        brief,
-        style,
-        analysis: prompts.analysis,
-        startFrame: prompts.startFrame,
-        endFrame: prompts.endFrame,
-        videoPrompt: prompts.videoPrompt
-      });
-      setHistoryRefresh(prev => prev + 1);
-      
-      setIsGenerating(false);
-      toast.success("Đã tạo prompt thành công!");
-    }, 600);
-  }, [brief, style, customStyle, sceneDetails, aspectRatio, duration, fps]);
+    const input: PromptInput = {
+      brief,
+      style,
+      customStyle: style === "other" ? customStyle : undefined,
+      sceneDetails,
+      aspectRatio,
+      duration,
+      fps
+    };
+    
+    const prompts = generatePrompts(input);
+    setGeneratedPrompts(prompts);
+    
+    // Save to storage (database or local)
+    await saveToStorage(prompts);
+    
+    setIsGenerating(false);
+    toast.success("Đã tạo prompt thành công!");
+  }, [brief, style, customStyle, sceneDetails, aspectRatio, duration, fps, saveToStorage]);
 
   const handleGenerate = useCallback(() => {
     if (useAI) {
@@ -152,7 +167,7 @@ export function PromptGenerator() {
     }
   }, [useAI, handleGenerateWithAI, handleGenerateLocal]);
 
-  const handleLoadFromHistory = useCallback((saved: SavedPrompt) => {
+  const handleLoadFromHistory = useCallback((saved: SavedPrompt | { id: string; brief: string; style: string; analysis: string; startFrame: string; endFrame: string; videoPrompt: string; createdAt: string }) => {
     setBrief(saved.brief);
     setStyle(saved.style as FilmStyle);
     setGeneratedPrompts({
