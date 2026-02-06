@@ -1,0 +1,5 @@
+project_id = "jdisasqnvxagksvbqwny"
+
+[functions.generate-prompt]
+enabled = true
+verify_jwt = false

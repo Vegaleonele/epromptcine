@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Sparkles, Wand2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Sparkles, Wand2, Zap, Brain } from "lucide-react";
+import { toast } from "sonner";
 import { StyleSelector } from "./StyleSelector";
 import { BriefInput } from "./BriefInput";
 import { SceneDetailsForm } from "./SceneDetailsForm";
 import { TechnicalSettings } from "./TechnicalSettings";
 import { PromptOutput } from "./PromptOutput";
+import { FileUpload } from "./FileUpload";
+import { PromptHistory } from "./PromptHistory";
 import { generatePrompts } from "@/lib/promptGenerator";
+import { savePrompt, type SavedPrompt } from "@/lib/promptHistory";
+import { supabase } from "@/integrations/supabase/client";
 import type { FilmStyle, SceneDetails, PromptInput, GeneratedPrompts } from "@/types/prompt";
 
 const initialSceneDetails: SceneDetails = {
@@ -30,13 +36,84 @@ export function PromptGenerator() {
   const [fps, setFps] = useState("24");
   const [generatedPrompts, setGeneratedPrompts] = useState<GeneratedPrompts | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [instructionContent, setInstructionContent] = useState("");
+  const [useAI, setUseAI] = useState(true);
+  const [historyRefresh, setHistoryRefresh] = useState(0);
 
-  const handleGenerate = () => {
+  const handleGenerateWithAI = useCallback(async () => {
     if (!brief.trim()) return;
     
     setIsGenerating(true);
     
-    // Simulate generation delay for UX
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-prompt", {
+        body: {
+          brief,
+          style,
+          customStyle: style === "other" ? customStyle : undefined,
+          sceneDetails,
+          aspectRatio,
+          duration,
+          fps,
+          instructionContext: instructionContent || undefined
+        }
+      });
+
+      if (error) {
+        console.error("AI generation error:", error);
+        toast.error("Lỗi AI. Đang sử dụng fallback...");
+        // Fallback to local generation
+        handleGenerateLocal();
+        return;
+      }
+
+      if (data.error) {
+        if (data.error.includes("Rate limit")) {
+          toast.error("Đã vượt giới hạn request. Vui lòng thử lại sau.");
+        } else if (data.error.includes("Payment")) {
+          toast.error("Cần thêm credits. Vui lòng nạp thêm.");
+        } else {
+          toast.error(data.error);
+        }
+        setIsGenerating(false);
+        return;
+      }
+
+      const prompts: GeneratedPrompts = {
+        analysis: data.analysis || "Đã phân tích brief thành công.",
+        startFrame: data.startFrame || "",
+        endFrame: data.endFrame || "",
+        videoPrompt: data.videoPrompt || ""
+      };
+
+      setGeneratedPrompts(prompts);
+      
+      // Save to history
+      savePrompt({
+        brief,
+        style,
+        analysis: prompts.analysis,
+        startFrame: prompts.startFrame,
+        endFrame: prompts.endFrame,
+        videoPrompt: prompts.videoPrompt
+      });
+      setHistoryRefresh(prev => prev + 1);
+      
+      toast.success("Đã tạo prompt với AI thành công!");
+    } catch (err) {
+      console.error("Error:", err);
+      toast.error("Lỗi kết nối. Đang sử dụng fallback...");
+      handleGenerateLocal();
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [brief, style, customStyle, sceneDetails, aspectRatio, duration, fps, instructionContent]);
+
+  const handleGenerateLocal = useCallback(() => {
+    if (!brief.trim()) return;
+    
+    setIsGenerating(true);
+    
     setTimeout(() => {
       const input: PromptInput = {
         brief,
@@ -50,9 +127,41 @@ export function PromptGenerator() {
       
       const prompts = generatePrompts(input);
       setGeneratedPrompts(prompts);
+      
+      // Save to history
+      savePrompt({
+        brief,
+        style,
+        analysis: prompts.analysis,
+        startFrame: prompts.startFrame,
+        endFrame: prompts.endFrame,
+        videoPrompt: prompts.videoPrompt
+      });
+      setHistoryRefresh(prev => prev + 1);
+      
       setIsGenerating(false);
-    }, 800);
-  };
+      toast.success("Đã tạo prompt thành công!");
+    }, 600);
+  }, [brief, style, customStyle, sceneDetails, aspectRatio, duration, fps]);
+
+  const handleGenerate = useCallback(() => {
+    if (useAI) {
+      handleGenerateWithAI();
+    } else {
+      handleGenerateLocal();
+    }
+  }, [useAI, handleGenerateWithAI, handleGenerateLocal]);
+
+  const handleLoadFromHistory = useCallback((saved: SavedPrompt) => {
+    setBrief(saved.brief);
+    setStyle(saved.style as FilmStyle);
+    setGeneratedPrompts({
+      analysis: saved.analysis,
+      startFrame: saved.startFrame,
+      endFrame: saved.endFrame,
+      videoPrompt: saved.videoPrompt
+    });
+  }, []);
 
   return (
     <section id="generator" className="py-16">
@@ -76,6 +185,27 @@ export function PromptGenerator() {
             {/* Input Section */}
             <div className="space-y-6">
               <div className="glass-panel rounded-xl p-6 space-y-6">
+                {/* Header with History */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <Brain className="w-4 h-4 text-secondary" />
+                      <Label htmlFor="useAI" className="text-sm cursor-pointer">
+                        Dùng AI
+                      </Label>
+                    </div>
+                    <Switch
+                      id="useAI"
+                      checked={useAI}
+                      onCheckedChange={setUseAI}
+                    />
+                  </div>
+                  <PromptHistory 
+                    onLoadPrompt={handleLoadFromHistory} 
+                    refreshTrigger={historyRefresh}
+                  />
+                </div>
+                
                 <BriefInput value={brief} onChange={setBrief} />
                 
                 <StyleSelector value={style} onChange={setStyle} />
@@ -92,6 +222,11 @@ export function PromptGenerator() {
                     />
                   </div>
                 )}
+                
+                <FileUpload 
+                  content={instructionContent}
+                  onFileContent={setInstructionContent}
+                />
                 
                 <SceneDetailsForm value={sceneDetails} onChange={setSceneDetails} />
                 
@@ -113,12 +248,12 @@ export function PromptGenerator() {
                   {isGenerating ? (
                     <>
                       <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                      Đang tạo prompt...
+                      {useAI ? "AI đang phân tích..." : "Đang tạo prompt..."}
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-4 h-4" />
-                      Generate Prompts
+                      {useAI ? <Zap className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+                      {useAI ? "Generate với AI" : "Generate Prompts"}
                     </>
                   )}
                 </Button>
