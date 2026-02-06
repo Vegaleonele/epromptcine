@@ -2,95 +2,89 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Background layers - Deep Cinematic Black */
+    --background: 8 8% 4%;
+    --background-secondary: 8 8% 6%;
+    --background-tertiary: 8 8% 8%;
+    
+    /* Foreground hierarchy */
+    --foreground: 40 20% 95%;
+    --foreground-muted: 40 10% 70%;
+    --foreground-subtle: 40 5% 45%;
+    
+    /* Brand: Cinematic Gold */
+    --primary: 42 65% 58%;
+    --primary-foreground: 8 8% 4%;
+    --primary-glow: 42 100% 65%;
+    
+    /* Secondary: Cool Blue */
+    --secondary: 217 70% 65%;
+    --secondary-foreground: 220 15% 95%;
+    
+    /* Accent: Warm Amber */
+    --accent: 32 80% 50%;
+    --accent-foreground: 32 100% 98%;
+    
+    /* Muted surfaces */
+    --muted: 8 5% 12%;
+    --muted-foreground: 40 5% 55%;
+    
+    /* Cards and elevated surfaces */
+    --card: 8 8% 7%;
+    --card-foreground: 40 20% 95%;
+    --card-border: 40 10% 15%;
+    
+    /* Popover and overlays */
+    --popover: 8 8% 6%;
+    --popover-foreground: 40 20% 95%;
+    
+    /* Borders */
+    --border: 40 8% 14%;
+    --border-hover: 40 15% 25%;
+    
+    /* Input fields */
+    --input: 8 8% 10%;
+    --input-border: 40 10% 18%;
+    
+    /* Ring for focus states */
+    --ring: 42 65% 58%;
+    
+    /* Destructive */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Chart colors */
+    --chart-1: 42 65% 58%;
+    --chart-2: 217 70% 65%;
+    --chart-3: 32 80% 50%;
+    --chart-4: 160 60% 45%;
+    --chart-5: 280 60% 55%;
+    
+    /* Radius */
+    --radius: 0.75rem;
+    
+    /* Sidebar */
+    --sidebar-background: 8 8% 5%;
+    --sidebar-foreground: 40 20% 95%;
+    --sidebar-primary: 42 65% 58%;
+    --sidebar-primary-foreground: 8 8% 4%;
+    --sidebar-accent: 8 8% 10%;
+    --sidebar-accent-foreground: 40 20% 95%;
+    --sidebar-border: 40 8% 14%;
+    --sidebar-ring: 42 65% 58%;
+    
+    /* Film style accent colors */
+    --style-pixar: 45 100% 60%;
+    --style-realistic: 220 15% 55%;
+    --style-epic: 280 60% 45%;
+    --style-scifi: 185 100% 50%;
+    --style-fantasy: 270 80% 60%;
+    --style-horror: 0 60% 40%;
+    --style-documentary: 40 30% 50%;
+    --style-vintage: 35 60% 55%;
+    --style-anime: 330 80% 60%;
   }
 }
 
@@ -99,7 +93,119 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+    background-image: 
+      radial-gradient(ellipse at top, hsl(var(--background-secondary)) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom right, hsl(var(--primary) / 0.03) 0%, transparent 40%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    @apply font-semibold tracking-tight;
+  }
+}
+
+/* Custom scrollbar */
+@layer utilities {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background-secondary));
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--border-hover));
+  }
+}
+
+/* Animation utilities */
+@layer utilities {
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.2);
+    }
+    to {
+      box-shadow: 0 0 40px hsl(var(--primary) / 0.4);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass-panel {
+    background: hsl(var(--card) / 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--card-border));
+  }
+}
+
+/* Prompt output styling */
+@layer components {
+  .prompt-output {
+    @apply font-mono text-sm leading-relaxed;
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .prompt-output::selection {
+    background: hsl(var(--primary) / 0.3);
   }
 }
