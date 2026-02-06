@@ -12,6 +12,7 @@ import { TechnicalSettings } from "./TechnicalSettings";
 import { PromptOutput } from "./PromptOutput";
 import { FileUpload } from "./FileUpload";
 import { PromptHistory } from "./PromptHistory";
+import { AuthDialog } from "./auth/AuthDialog";
 import { generatePrompts } from "@/lib/promptGenerator";
 import { savePrompt, type SavedPrompt } from "@/lib/promptHistory";
 import { savePromptToDatabase, type DatabasePrompt } from "@/lib/promptDatabase";
@@ -177,6 +178,37 @@ export function PromptGenerator() {
       videoPrompt: saved.videoPrompt
     });
   }, []);
+
+  // Show login required message if not authenticated
+  if (!user) {
+    return (
+      <section id="generator" className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <div className="glass-panel rounded-xl p-8 md:p-12 text-center">
+              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
+                <Wand2 className="w-8 h-8 text-primary" />
+              </div>
+              <h2 className="font-display text-2xl md:text-3xl font-bold mb-4">
+                Đăng nhập để sử dụng
+              </h2>
+              <p className="text-foreground-muted mb-8 max-w-md mx-auto">
+                Vui lòng đăng nhập để sử dụng trình tạo prompt. Điều này giúp bảo vệ tài nguyên AI và cho phép bạn lưu trữ prompt.
+              </p>
+              <AuthDialog 
+                trigger={
+                  <Button size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-primary-glow shadow-glow-md">
+                    <Sparkles className="w-4 h-4" />
+                    Đăng nhập ngay
+                  </Button>
+                }
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="generator" className="py-16">
