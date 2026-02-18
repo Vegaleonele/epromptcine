@@ -27,9 +27,8 @@ NHIỆM VỤ:
 Phân tích brief của user và tạo ra các prompt chuyên nghiệp với:
 1. Ngôn ngữ điện ảnh: low-angle, dutch tilt, anamorphic flare, shallow depth of field, volumetric godrays, etc.
 2. Mô tả chuyển động có chủ đích: anticipation, squash & stretch, follow-through, easing
-3. Thời gian ước lượng (giây) để AI video tool hiểu nhịp điệu
-4. Chất lượng cao: 4K/8K, best quality, cinematic, detailed textures
-5. Negative prompt mạnh
+3. Chất lượng cao: 4K/8K, best quality, cinematic, detailed textures
+4. Negative prompt mạnh
 
 ĐỊNH DẠNG OUTPUT (JSON):
 {
