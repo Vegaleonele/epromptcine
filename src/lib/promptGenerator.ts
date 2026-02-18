@@ -147,26 +147,26 @@ ${input.brief}
 
 ${sceneContext}
 
-Motion Sequence (Duration: ${duration} seconds):
+Motion Sequence:
 
-0-${(duration * 0.2).toFixed(1)}s: ANTICIPATION
+ANTICIPATION:
 - Subject in initial position, establishing shot
 - Subtle anticipation movement (weight shift, breath, eye movement)
 - Camera: Slow dolly in or static establishing
 
-${(duration * 0.2).toFixed(1)}-${(duration * 0.5).toFixed(1)}s: MAIN ACTION
+MAIN ACTION:
 - Primary action/movement executed
 - Dynamic camera movement following action
 - Physics: cloth, hair, particles react naturally
 - Peak energy moment
 
-${(duration * 0.5).toFixed(1)}-${(duration * 0.8).toFixed(1)}s: FOLLOW-THROUGH
+FOLLOW-THROUGH:
 - Action consequences play out
 - Environment reaction (debris, particles, effects)
 - Camera settles or continues smooth movement
 - Momentum carries through
 
-${(duration * 0.8).toFixed(1)}-${duration}s: RESOLUTION
+RESOLUTION:
 - Subject settles into final pose
 - Environment stabilizes
 - Camera reaches final composition
@@ -192,7 +192,6 @@ Technical Specifications:
 - Resolution: 4K/8K
 - Frame Rate: ${fps} FPS (cinematic)
 - Aspect Ratio: ${input.aspectRatio}
-- Duration: ${duration} seconds
 - Render: ${input.style === "pixar" ? "Pixar Quality 3D" : "Unreal Engine 5 / Cinematic Quality"}
 
 AVOID: ${negativePrompt}, fast jerky motion, inconsistent character, abrupt cuts, floaty movement`;
